@@ -13,10 +13,13 @@ struct NodeArch* newNodes(NetArch* netA, int numNodes)
 
 	for(int i=0;i<numNodes;i++)
 	{
+		int temp_rand = rand();
+		float energy = fmod((float) temp_rand, netA->energy.init); //energy is some random value between 0 and energy.init
+
 		nodeA->node[i].id = i;
 		nodeA->node[i].x = rand() % netA->yard.width; 	
 		nodeA->node[i].y = rand() % netA->yard.height; 
-		nodeA->node[i].energy = netA->energy.init; //TODO: minus some random value between 0 and energy.init
+		nodeA->node[i].energy = netA->energy.init; 
 		nodeA->node[i].clusterHead = -1;
 	}
 

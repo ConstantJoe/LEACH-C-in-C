@@ -2,11 +2,12 @@
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
 #ifndef NODEARCHITECTURE_H
 #define NODEARCHITECTURE_H
 
-#define MAX_NODES 300
+#define MAX_NODES 100
 
 typedef struct Node {
 	int id;
