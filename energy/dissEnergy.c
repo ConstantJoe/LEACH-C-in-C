@@ -64,7 +64,7 @@ float dissEnergyNonCH(ClusterModel* clusterM)
 
     for(int i=0; i<clusterM->nodeA.numNode; i++)
     {
-        if(!(clusterM->nodeA.node[i].clusterHead = clusterM->nodeA.node[i].id)) //if not a CH
+        if(!(clusterM->nodeA.node[i].clusterHead == clusterM->nodeA.node[i].id)) //if not a CH
         {
             int locNodeX = clusterM->nodeA.node[i].x;
             int locNodeY = clusterM->nodeA.node[i].y;
@@ -94,9 +94,7 @@ float dissEnergyNonCH(ClusterModel* clusterM)
 
 float totalEnergy(ClusterModel* clusterM){
     float energy = 0;
-
     energy += dissEnergyCH(clusterM);
-
     energy += dissEnergyNonCH(clusterM);
 
     return energy;

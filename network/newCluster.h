@@ -16,12 +16,16 @@ double clusterOptimum(NetArch* netA, NodeArch* nodeA, double dBS);
 
 ClusterModel* newClusterModel(NetArch* netA, NodeArch* nodeA);
 
-ClusterModel* chooseCHs(ClusterModel* clusterM);
+ClusterModel* copyClusterModel(ClusterModel* to, ClusterModel* from);
 
-ClusterModel* assignNodes(ClusterModel* clusterM);
+void chooseCHs(ClusterModel* clusterM);
 
-ClusterModel* clearCHs(ClusterModel* clusterM);
+void assignNodes(ClusterModel* clusterM);
 
-ClusterModel* modifyaCH(ClusterModel* clusterM);
+void clearCHs(ClusterModel* clusterM);
+
+void modifyaCH(ClusterModel* clusterM);
+
+void printNetDetails(ClusterModel* clusterM);
 
 #endif /* NEWCLUSTER_H */

@@ -12,6 +12,14 @@ double randZeroAndOne()
     return (double)rand() / (double)RAND_MAX ;
 }
 
+
+/*
+ *	TODOs:  energy of all nodes is always .5
+ *			modify "exploration" method to match the paper (current one is awful):
+ 				-	compute average node energy
+ 				-	whatever nodes have energy below this can't be CHs
+ 				-	maybe make it so theres a k% chance a CH will be changed? 
+ */
 int main(int argc, char *argv[]){
 	//create an environment
 	struct NetArch* netA  	 = newNetwork(0, 0, 0, 0);
@@ -28,44 +36,45 @@ int main(int argc, char *argv[]){
 	bestClusterM->numCluster = clusterOptimum(&bestClusterM->netA, &bestClusterM->nodeA, dBS);
 
 	// generate a set of CHs randomly
-	bestClusterM = chooseCHs(bestClusterM);
-	
+	chooseCHs(bestClusterM);
+
 	// assign nodes to CHs
-	bestClusterM = assignNodes(bestClusterM);
+	assignNodes(bestClusterM);
 
 	// calculate energy requirements (fitness function)
 	float bestEnergy = totalEnergy(bestClusterM);
 	float energy;
 	double expVal;
 	double randVal;
+
 	// create a temperature variable, cooling rate
 	float temp = 10000;
 	int round = 0;
 	float coolingRate = 0.003;
 
-	struct ClusterModel *newClusterM = malloc(sizeof *newClusterM);
+	struct ClusterModel* newClusterM = malloc(sizeof *newClusterM);
+
 
 	// LOOP until stop condition met:
 	while(temp > 1){
-		printf("Start a round\r\n");
 		round++;
+
+		copyClusterModel(newClusterM, bestClusterM);
 
 		// select neighbour by making small change to current solution 
 		// (i.e. swap out one CH for another random one, then reassign all nodes)
 
-		//TODO: check if bestClusterM changes from here
-		printf("a\r\n");
-		newClusterM = modifyaCH(bestClusterM);
+		modifyaCH(newClusterM);
 		// to here
+		assignNodes(newClusterM);
 
 		// calculate energy requirements
-		printf("b\r\n");
 		energy = totalEnergy(newClusterM);
+		float energyB = totalEnergy(bestClusterM);
 
 		// decide whether to move to that solution:
 		
 		// if neighbour solution is better than current solution
-		printf("c\r\n");
 		expVal = exp((bestEnergy - energy) / temp);
 		randVal = randZeroAndOne();
 		if(energy < bestEnergy){

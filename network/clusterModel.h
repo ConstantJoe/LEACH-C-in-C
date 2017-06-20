@@ -12,7 +12,7 @@
 #ifndef CLUSTERMODEL_H
 #define CLUSTERMODEL_H
 
-#define MAX_CHS
+#define MAX_CHS	100
 
 typedef struct ClusterNode{
 	int no; //index of the node in the nodeArchitecture

@@ -37,31 +37,46 @@ ClusterModel* newClusterModel(NetArch* netA, NodeArch* nodeA)
 	return clusterM;
 }
 
+void printNetDetails(ClusterModel* clusterM){
+	for(int i=0; i<clusterM->nodeA.numNode; i++)
+	{
+		printf("%d\r\n", clusterM->nodeA.node[i].clusterHead);
+		printf("%d\r\n", clusterM->nodeA.node[i].id);
+		printf("%f\r\n\r\n", clusterM->nodeA.node[i].energy);
+	}
+}
+
 /**
 *	Calculates the optimal number of nodes, then calls the leach algorithm to generate clusters. Leach algorithm is defined separately
 *	to enable this method to be easily modified to handle a different clustering algorithm.  
 **/
 
-ClusterModel* chooseCHs(ClusterModel* clusterM)
+void chooseCHs(ClusterModel* clusterM)
 {
 	//choose numCluster cluster heads randomly
 	int stop = 1;
 	int countCHs = 0;
+	int i;
 	while(countCHs < clusterM->numCluster && stop){
-		for(int i=0; i<clusterM->nodeA.numNode; i++)
+		for(i=0; i<clusterM->nodeA.numNode; i++)
 		{
+			
 			if(!(clusterM->nodeA.node[i].clusterHead == clusterM->nodeA.node[i].id)) //if not already a CH
 			{
 				int temp_rand = rand(); 
 				
 				if((temp_rand % clusterM->nodeA.numNode) <= clusterM->numCluster)
 				{
+					
 					clusterM->nodeA.node[i].clusterHead = clusterM->nodeA.node[i].id;
-					clusterM->clusterN.cNodes[countCHs].no = i; 
+					
 					clusterM->clusterN.cNodes[countCHs].locX = clusterM->nodeA.node[i].x; 
 					clusterM->clusterN.cNodes[countCHs].locY = clusterM->nodeA.node[i].y;
 					clusterM->clusterN.cNodes[countCHs].distance = sqrt(pow(clusterM->nodeA.node[i].x - clusterM->netA.sink.x, 2) + pow(clusterM->nodeA.node[i].y - clusterM->netA.sink.y, 2));
+					clusterM->clusterN.cNodes[countCHs].no = i; 
 					countCHs++;
+
+
 
 					if(countCHs == clusterM->numCluster){
 						stop = 0;
@@ -73,43 +88,35 @@ ClusterModel* chooseCHs(ClusterModel* clusterM)
 	}
 
 	clusterM->clusterN.countCHs = countCHs;
-	return clusterM;
 }
 
-ClusterModel* clearCHs(ClusterModel* clusterM){
+void clearCHs(ClusterModel* clusterM){
 	for(int i=0; i<clusterM->nodeA.numNode; i++)
 	{
-		clusterM->nodeA.node[i].clusterHead = -1;
+		if(!(clusterM->nodeA.node[i].clusterHead == clusterM->nodeA.node[i].id)){
+			clusterM->nodeA.node[i].clusterHead = -1;	
+		}
 	}
 
 	clusterM->clusterN.countCHs = 0;
-	
-	return clusterM;
 }
 
-ClusterModel* modifyaCH(ClusterModel* clusterM){
+void modifyaCH(ClusterModel* clusterM){
 	//choose one of the CHs at random
 	int temp_rand = rand(); 
 	int choiceCH = temp_rand % clusterM->clusterN.countCHs;
-	
+		
+
 	//set it to be a normal node again
 	int choiceInd = clusterM->clusterN.cNodes[choiceCH].no;
 	clusterM->nodeA.node[choiceInd].clusterHead = -1;
 
 	//set a different random node to be a CH
 	int stop = 1;
+	
 	while(stop){
-
-
 		temp_rand = rand();
 		int choice = temp_rand % clusterM->nodeA.numNode;
-
-				printf("in loop\r\n");
-		printf("%d\r\n", temp_rand);
-		printf("%d\r\n", choice);
-		printf("%d\r\n", clusterM->nodeA.node[choice].clusterHead);
-		printf("%d\r\n", clusterM->nodeA.node[choice].id);
-		printf("%d\r\n", choiceInd);
 		
 		if(!(clusterM->nodeA.node[choice].clusterHead == clusterM->nodeA.node[choice].id) && choice != choiceInd)
 		{
@@ -122,11 +129,9 @@ ClusterModel* modifyaCH(ClusterModel* clusterM){
 			stop = 0;
 		}	
 	}
-	
-	return clusterM;
 }
 
-ClusterModel* assignNodes(ClusterModel* clusterM)
+void assignNodes(ClusterModel* clusterM)
 {
 	for(int i=0; i<clusterM->nodeA.numNode; i++){
 		if(!(clusterM->nodeA.node[i].clusterHead == clusterM->nodeA.node[i].id)) //if node is not a CH
@@ -152,6 +157,13 @@ ClusterModel* assignNodes(ClusterModel* clusterM)
         	clusterM->nodeA.node[i].clusterHead = clusterM->clusterN.cNodes[loc].no;
 		}
 	}
+}
 
-	return clusterM;
+ClusterModel* copyClusterModel(ClusterModel* to, ClusterModel* from){ 
+	to->netA = from->netA;
+	to->nodeA = from->nodeA;
+	to->clusterN = from->clusterN;
+	to->numCluster = from->numCluster;
+	to->p = from->p;
+	return to;
 }
